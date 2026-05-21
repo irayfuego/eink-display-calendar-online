@@ -22,8 +22,7 @@
 #include <time.h>
 #include <WiFi.h>
 #include <Wire.h>
-#include <AsyncMqttClient.h>
-#include <mqtt.h>
+#include "calendar.h"
 
 #include "_locale.h"
 #include "api_response.h"
@@ -250,23 +249,6 @@ void setup()
 
   //Report battery status and wifi Signal
 
-  uint32_t batPercent = calcBatPercent(batteryVoltage,
-                                      CRIT_LOW_BATTERY_VOLTAGE,
-                                      MAX_BATTERY_VOLTAGE);
-
-  char tempJsonStringDone[256];    
-  StaticJsonDocument<256> ResponseStatus;
-  ResponseStatus["battery"] = batPercent;
-  ResponseStatus["voltage"] = batteryVoltage;
-  ResponseStatus["linkquality"] = wifiRSSI;
-
-  size_t n = serializeJson(ResponseStatus, tempJsonStringDone);   
-
-
-  // MQTT CONNECT
-  MQTTSetup(&timeInfo, tempJsonStringDone);
-
-
   // MAKE API REQUESTS
 #ifdef USE_HTTP
   WiFiClient client;
@@ -291,7 +273,9 @@ void setup()
     powerOffDisplay();
     beginDeepSleep(startTime, &timeInfo);
   }
-  
+
+  getGoogleCalendar(client, &timeInfo);
+
   /*
   rxStatus = getOWMairpollution(client, owm_air_pollution);
   if (rxStatus != HTTP_CODE_OK)

@@ -43,6 +43,10 @@ const uint8_t PIN_BME_SCL = 16;
 const uint8_t PIN_BME_PWR =  4;   // Irrelevant if directly connected to 3.3V
 const uint8_t BME_ADDRESS = 0x76; // If sensor does not work, try 0x77
 
+// GOOGLE CALENDAR
+// URL del Google Apps Script desplegado como web app (ver google_apps_script/calendar_api.gs)
+const char *GCAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvn5GB_EEz0K9qE5_66PVFzjg6Q62tLJazIWaovrN3gb9Hw7ZSyiDteJnnFHs4Dcg/exec";
+
 // WIFI
 const char *WIFI_SSID     = "MMV_IN";
 const char *WIFI_PASSWORD = "T@mariu0";
