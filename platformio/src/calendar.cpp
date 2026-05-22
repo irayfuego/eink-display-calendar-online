@@ -32,20 +32,34 @@ static byte calcDayOfWeek(int d, int m, int y)
   return (y + y/4 - y/100 + y/400 + t[m-1] + d) % 7; // Sun=0, Mon=1, ..., Sat=6
 }
 
-static String removeAccents(const String& input)
+static String sanitizeText(const String& input)
 {
-  String output = input;
-  output.replace("á", "a");
-  output.replace("é", "e");
-  output.replace("í", "i");
-  output.replace("ó", "o");
-  output.replace("ú", "u");
-  output.replace("Á", "A");
-  output.replace("É", "E");
-  output.replace("Í", "I");
-  output.replace("Ó", "O");
-  output.replace("Ú", "U");
-  return output;
+  String s = input;
+  // Lowercase accented vowels
+  s.replace("á", "a"); s.replace("à", "a"); s.replace("â", "a"); s.replace("ä", "a"); s.replace("ã", "a");
+  s.replace("é", "e"); s.replace("è", "e"); s.replace("ê", "e"); s.replace("ë", "e");
+  s.replace("í", "i"); s.replace("ì", "i"); s.replace("î", "i"); s.replace("ï", "i");
+  s.replace("ó", "o"); s.replace("ò", "o"); s.replace("ô", "o"); s.replace("ö", "o"); s.replace("õ", "o");
+  s.replace("ú", "u"); s.replace("ù", "u"); s.replace("û", "u"); s.replace("ü", "u");
+  // Uppercase accented vowels
+  s.replace("Á", "A"); s.replace("À", "A"); s.replace("Â", "A"); s.replace("Ä", "A"); s.replace("Ã", "A");
+  s.replace("É", "E"); s.replace("È", "E"); s.replace("Ê", "E"); s.replace("Ë", "E");
+  s.replace("Í", "I"); s.replace("Ì", "I"); s.replace("Î", "I"); s.replace("Ï", "I");
+  s.replace("Ó", "O"); s.replace("Ò", "O"); s.replace("Ô", "O"); s.replace("Ö", "O"); s.replace("Õ", "O");
+  s.replace("Ú", "U"); s.replace("Ù", "U"); s.replace("Û", "U"); s.replace("Ü", "U");
+  // ñ / Ñ
+  s.replace("ñ", "n"); s.replace("Ñ", "N");
+  // ç / Ç
+  s.replace("ç", "c"); s.replace("Ç", "C");
+  // Punctuation and symbols that often appear in calendar titles
+  s.replace("«", "\""); s.replace("»", "\"");
+  s.replace("\xe2\x80\x93", "-"); // en dash
+  s.replace("\xe2\x80\x94", "-"); // em dash
+  s.replace("\xe2\x80\x98", "'"); // left single quote
+  s.replace("\xe2\x80\x99", "'"); // right single quote / apostrophe
+  s.replace("\xe2\x80\x9c", "\""); // left double quote
+  s.replace("\xe2\x80\x9d", "\""); // right double quote
+  return s;
 }
 
 void drawCalendarEntries()
@@ -88,7 +102,7 @@ void drawCalendarEntries()
     display.setFont(&FONT_22pt8b);
     drawString(xPos0 + 120, yPos0 + i * CALENDAR_LINE_GAP, timetodraw, RIGHT);
 
-    String eventTitle = removeAccents(calendar_entries[i].summary);
+    String eventTitle = sanitizeText(calendar_entries[i].summary);
     display.setFont(&FONT_26pt8b);
     drawString(xPos0 + 140, yPos0 + i * CALENDAR_LINE_GAP, eventTitle.c_str(), LEFT);
   }
